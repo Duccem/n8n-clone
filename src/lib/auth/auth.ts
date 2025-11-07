@@ -28,6 +28,7 @@ export const auth = betterAuth({
     provider: "pg",
     schema,
   }),
+  secret: process.env.BETTER_AUTH_SECRET || "",
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
@@ -41,8 +42,8 @@ export const auth = betterAuth({
     },
     github: {
       enabled: true,
-      clientId: process.env.DISCORD_CLIENT_ID as string,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
   advanced: {
