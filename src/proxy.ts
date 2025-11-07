@@ -8,7 +8,6 @@ const I18nMiddleware = createI18nMiddleware({
 });
 
 export function proxy(request: NextRequest) {
-  console.log("I18nMiddleware called");
   return I18nMiddleware(request);
 }
 

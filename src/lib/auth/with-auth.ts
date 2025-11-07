@@ -6,9 +6,10 @@ import {
   defineAppError,
   isAppError,
 } from "../types/app-error";
-import { auth, BetterSession, getSession } from "./auth";
+import { auth, BetterSession } from "./auth";
 import { AppResponse } from "../types/app-response";
 import { headers } from "next/headers";
+import { getSession } from "better-auth/api";
 
 const ROLES = ["admin", "therapist", "patient"] as const;
 type Role = (typeof ROLES)[number];

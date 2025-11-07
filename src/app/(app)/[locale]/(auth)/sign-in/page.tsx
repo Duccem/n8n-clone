@@ -1,6 +1,8 @@
 import { SignInForm } from "@/components/auth/sign-in-form";
+import { requireAnon } from "@/lib/auth/utils/require-auth";
 
-export default function page() {
+export default async function page() {
+  await requireAnon();
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <h1 className="font-normal text-3xl">Welcome back</h1>

@@ -112,9 +112,3 @@ export type BetterOrganization = typeof auth.$Infer.Organization;
 export type BetterMember = typeof auth.$Infer.Member;
 export type BetterInvitation = typeof auth.$Infer.Invitation;
 
-export const getSession = cache(async (): Promise<BetterSession | null> => {
-  return await auth.api.getSession({
-    headers: await headers(),
-  });
-});
-
