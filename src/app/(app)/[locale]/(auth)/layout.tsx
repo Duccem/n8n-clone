@@ -7,19 +7,18 @@ export default function AuthLayout({
     <div className="min-h-screen flex font-sans">
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="relative z-10 flex flex-col justify-between w-full px-12 py-12 bg-primary">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center mr-3">
-              <div className="w-4 h-4 rounded-md bg-primary" />
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="/images/nodebase-logo.png" alt="" className="size-12" />
             <h1 className="text-xl font-semibold text-white">Nodebase</h1>
           </div>
 
           <div className="flex-1 flex flex-col justify-center">
             <h2 className="text-4xl text-white mb-6 leading-tight">
-              Enhance your life with the mental health support you deserve.
+              Welcome to Nodebase
             </h2>
             <p className="text-white text-lg leading-relaxed">
-              Join Helsa today and take the first step towards a healthier,
+              Automate your workflows and boost your productivity with our
+              powerful platform.
             </p>
           </div>
 
