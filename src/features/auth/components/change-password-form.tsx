@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { authClient } from "@/lib/auth/auth-client";
 import { useForm } from "@tanstack/react-form";
@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { parseAsString, useQueryStates } from "nuqs";
 import { toast } from "sonner";
 import z from "zod";
-import { Label } from "../ui/label";
-import { PasswordInput } from "../ui/password-input";
-import { Button } from "../ui/button";
+import { Label } from "../../../components/ui/label";
+import { PasswordInput } from "../../../components/ui/password-input";
+import { Button } from "../../../components/ui/button";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z
@@ -20,7 +20,7 @@ const formSchema = z
       .string()
       .min(
         8,
-        "La confirmación de la contraseña debe tener al menos 8 caracteres",
+        "La confirmación de la contraseña debe tener al menos 8 caracteres"
       ),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -37,8 +37,8 @@ export const ChangePasswordForm = () => {
 
   const form = useForm({
     defaultValues: {
-      password: '',
-      confirmPassword: '',
+      password: "",
+      confirmPassword: "",
     },
     validators: {
       onBlur: formSchema,
@@ -53,16 +53,16 @@ export const ChangePasswordForm = () => {
         },
         {
           onSuccess: () => {
-            router.push('/dashboard');
+            router.push("/dashboard");
           },
           onError: (error) => {
             console.error("Error resetting password:", error);
             toast.error(`Error: ${error.error.message}`);
-          }
+          },
         }
       );
-    }
-  })
+    },
+  });
 
   return (
     <form
@@ -118,10 +118,14 @@ export const ChangePasswordForm = () => {
             className="w-full"
             disabled={!state.canSubmit || state.isSubmitting}
           >
-            {state.isSubmitting ? <Loader2 className="animate-spin" /> : "Change Password"}
+            {state.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Change Password"
+            )}
           </Button>
         )}
       </form.Subscribe>
     </form>
-  )
-}
+  );
+};

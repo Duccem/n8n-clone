@@ -1,25 +1,30 @@
 "use client";
-
 import { authClient } from "@/lib/auth/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import z from "zod";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { PasswordInput } from "../ui/password-input";
-import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { Label } from "../../../components/ui/label";
+import { Input } from "../../../components/ui/input";
+import { PasswordInput } from "../../../components/ui/password-input";
 import Link from "next/link";
-import Google from "../icons/google";
+import { Button } from "../../../components/ui/button";
+import { Loader2 } from "lucide-react";
+import Google from "../../../components/icons/google";
 import { toast } from "sonner";
-import { GitHub } from "../icons/github";
+import { GitHub } from "../../../components/icons/github";
 
-const formSchema = z.object({
-  email: z.email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-});
+const formSchema = z
+  .object({
+    email: z.email("Invalid email").min(1, "Email required"),
+    name: z.string().min(1, "Name required"),
+    password: z.string().min(1, "Password required"),
+    confirmPassword: z.string().min(1, "Confirm password required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+  });
 
-export const SignInForm = () => {
+export const SignUpForm = () => {
   const router = useRouter();
 
   // Form setup and handling the submission
@@ -27,16 +32,19 @@ export const SignInForm = () => {
     defaultValues: {
       email: "",
       password: "",
+      name: "",
+      confirmPassword: "",
     },
     validators: {
       onBlur: formSchema,
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email(
+      await authClient.signUp.email(
         {
           email: value.email,
           password: value.password,
+          name: value.name,
         },
         {
           onSuccess: () => {
@@ -44,14 +52,13 @@ export const SignInForm = () => {
           },
           onError: (error) => {
             console.error("Sign-in error:", error);
-            toast.error(`Sign-in error: ${error.error.message}`);
+            toast.error(`Sign-up error: ${error.error.message}`);
           },
         }
       );
     },
   });
 
-  // OAuth sign-in handler
   const oauthSignIn = async (provider: "google" | "github") => {
     try {
       await authClient.signIn.social({
@@ -93,10 +100,30 @@ export const SignInForm = () => {
           </div>
         )}
       </form.Field>
-      <form.Field name="email">
+      <form.Field name="name">
         {(field) => (
           <div className="space-y-2">
-            <Label htmlFor={field.name}>Email</Label>
+            <Label htmlFor={field.name}>Name</Label>
+            <Input
+              id={field.name}
+              name={field.name}
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+              placeholder="John Doe"
+            />
+            {field.state.meta.errors.map((error) => (
+              <p key={error?.message} className="text-red-500">
+                {error?.message}
+              </p>
+            ))}
+          </div>
+        )}
+      </form.Field>
+      <form.Field name="password">
+        {(field) => (
+          <div className="space-y-2">
+            <Label htmlFor={field.name}>Password</Label>
             <PasswordInput
               id={field.name}
               name={field.name}
@@ -112,14 +139,25 @@ export const SignInForm = () => {
           </div>
         )}
       </form.Field>
-      <div className="flex items-center justify-between">
-        <Link
-          href={"/forget-password"}
-          className="text-blue-500 hover:underline"
-        >
-          Forgot password?
-        </Link>
-      </div>
+      <form.Field name="confirmPassword">
+        {(field) => (
+          <div className="space-y-2">
+            <Label htmlFor={field.name}>Confirm password</Label>
+            <PasswordInput
+              id={field.name}
+              name={field.name}
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+            {field.state.meta.errors.map((error) => (
+              <p key={error?.message} className="text-red-500">
+                {error?.message}
+              </p>
+            ))}
+          </div>
+        )}
+      </form.Field>
       <form.Subscribe>
         {(state) => (
           <Button
@@ -130,7 +168,7 @@ export const SignInForm = () => {
             {state.isSubmitting ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Sign In"
+              "Sign Up"
             )}
           </Button>
         )}
@@ -161,9 +199,9 @@ export const SignInForm = () => {
         </Button>
       </div>
       <p className="font-light text-center text-md">
-        Don't have an account?{" "}
-        <Link href={"/sign-up"} className="text-blue-500 hover:underline">
-          Sign Up
+        Already have an account?{" "}
+        <Link href={"/sign-in"} className="text-blue-500 hover:underline">
+          Sign In
         </Link>
       </p>
     </form>

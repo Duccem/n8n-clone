@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
 import { authClient } from "@/lib/auth/auth-client";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Label } from "../../../components/ui/label";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,11 +21,11 @@ export const ForgetPasswordForm = () => {
   const router = useRouter();
   const form = useForm({
     defaultValues: {
-      email: '',
+      email: "",
     },
     validators: {
       onBlur: formSchema,
-      onSubmit: formSchema
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
       await authClient.emailOtp.sendVerificationOtp(
@@ -35,12 +35,12 @@ export const ForgetPasswordForm = () => {
         },
         {
           onSuccess: () => {
-            router.push('/auth/check-email');
+            router.push("/auth/check-email");
           },
           onError: (error) => {
             console.error("Error sending verification OTP:", error);
             toast.error(`Error: ${error.error.message}`);
-          }
+          },
         }
       );
     },
@@ -55,7 +55,6 @@ export const ForgetPasswordForm = () => {
       }}
       className="flex flex-col w-2/3 gap-4 mt-6"
     >
-
       <form.Field name="email">
         {(field) => (
           <div className="space-y-2">
@@ -84,7 +83,11 @@ export const ForgetPasswordForm = () => {
             className="w-full"
             disabled={!state.canSubmit || state.isSubmitting}
           >
-            {state.isSubmitting ? <Loader2 className="animate-spin" /> : "Send Email"}
+            {state.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Send Email"
+            )}
           </Button>
         )}
       </form.Subscribe>
@@ -95,5 +98,5 @@ export const ForgetPasswordForm = () => {
         </Link>
       </p>
     </form>
-  )
-}
+  );
+};

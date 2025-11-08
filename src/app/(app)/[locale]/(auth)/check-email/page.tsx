@@ -1,4 +1,4 @@
-import { CheckEmailForm } from "@/components/auth/check-email-form";
+import { CheckEmailForm } from "@/features/auth/components/check-email-form";
 
 export default function Page() {
   return (
@@ -11,3 +11,4 @@ export default function Page() {
     </div>
   );
 }
+

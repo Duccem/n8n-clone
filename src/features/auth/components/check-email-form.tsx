@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { authClient } from "@/lib/auth/auth-client";
 import { useForm } from "@tanstack/react-form";
@@ -6,9 +6,13 @@ import { useRouter } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { toast } from "sonner";
 import z from "zod";
-import { Label } from "../ui/label";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { Button } from "../ui/button";
+import { Label } from "../../../components/ui/label";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "../../../components/ui/input-otp";
+import { Button } from "../../../components/ui/button";
 import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
@@ -20,11 +24,11 @@ export const CheckEmailForm = () => {
   const router = useRouter();
   const form = useForm({
     defaultValues: {
-      otp: '',
+      otp: "",
     },
     validators: {
       onBlur: formSchema,
-      onSubmit: formSchema
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
       await authClient.emailOtp.checkVerificationOtp(
@@ -40,7 +44,7 @@ export const CheckEmailForm = () => {
           onError: (error) => {
             console.error("Error verifying OTP:", error);
             toast.error(`Error: ${error.error.message}`);
-          }
+          },
         }
       );
     },
@@ -87,11 +91,14 @@ export const CheckEmailForm = () => {
             className="w-full"
             disabled={!state.canSubmit || state.isSubmitting}
           >
-            {state.isSubmitting ? <Loader2 className="animate-spin" /> : "Verify OTP"}
+            {state.isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Verify OTP"
+            )}
           </Button>
         )}
       </form.Subscribe>
-
     </form>
-  )
-}
+  );
+};
