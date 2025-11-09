@@ -39,7 +39,7 @@ const CreateOrganizationForm = () => {
           logoUrl = res[0].ufsUrl;
         }
       }
-      await authClient.organization.create(
+      const { data } = await authClient.organization.create(
         {
           name: value.name,
           logo: logoUrl,
@@ -48,13 +48,16 @@ const CreateOrganizationForm = () => {
         {
           onSuccess: () => {
             console.log("Organization created successfully");
-            router.refresh();
           },
           onError: (ctx) => {
             toast.error(`Error creating organization: ${ctx.error.message}`);
           },
         }
       );
+      await authClient.organization.setActive({
+        organizationId: data?.id,
+      });
+      router.refresh();
     },
   });
   return (
