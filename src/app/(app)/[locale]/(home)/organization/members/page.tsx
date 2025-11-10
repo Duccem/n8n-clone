@@ -12,7 +12,7 @@ export default async function Page() {
     headers: await headers(),
   });
   if (!data) {
-    return redirect("/organizations/settings");
+    return redirect("/organizations");
   }
   return (
     <div className="flex flex-col gap-4 w-1/2 p-6">
