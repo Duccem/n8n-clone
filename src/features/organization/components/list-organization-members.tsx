@@ -9,9 +9,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-  TableCaption,
 } from "@/components/ui/table";
-import { Member } from "better-auth/plugins";
 import { Loader2, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
