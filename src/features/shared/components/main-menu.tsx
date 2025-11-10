@@ -1,10 +1,11 @@
 "use client";
 
 import {
+  Building2,
   ChevronRight,
+  FolderOpen,
   LayoutDashboard,
   LayoutGrid,
-  Workflow,
 } from "lucide-react";
 
 import {
@@ -34,29 +35,37 @@ const menu = [
   {
     title: "Workflows",
     url: "#",
-    icon: Workflow,
+    icon: FolderOpen,
     items: [
       {
         title: "Workflows",
         url: "/workflows",
       },
       {
-        title: "Logs",
-        url: "/workflows/logs",
+        title: "Executions",
+        url: "/workflows/executions",
       },
       {
-        title: "Analytics",
-        url: "/workflows/analytics",
+        title: "Editor",
+        url: "/workflows/editor",
       },
     ],
   },
   {
-    title: "Organization",
+    title: "Integrations",
     icon: LayoutGrid,
+    items: [
+      { title: "All", url: "/integrations?q=all" },
+      { title: "AI", url: "/integrations?q=ai" },
+    ],
+  },
+  {
+    title: "Organization",
+    icon: Building2,
     items: [
       {
         title: "Settings",
-        url: "/organization/settings",
+        url: "/organization",
       },
       {
         title: "Members",

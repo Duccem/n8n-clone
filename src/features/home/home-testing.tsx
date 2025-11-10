@@ -20,6 +20,7 @@ export const HomeTesting = () => {
 
       return res.json();
     },
+    refetchOnWindowFocus: false,
   });
   const { mutate } = useMutation({
     mutationKey: ["create-workflow"],

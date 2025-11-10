@@ -30,6 +30,21 @@ export function OrganizationSwitcher() {
   const { data: activeOrg, isPending: isPendingOrg } =
     authClient.useActiveOrganization();
 
+  React.useEffect(() => {
+    if (!activeOrg && listOrgs && listOrgs.length > 0) {
+      authClient.organization.setActive(
+        {
+          organizationId: listOrgs[0].id,
+        },
+        {
+          onSuccess: () => {
+            router.refresh();
+          },
+        }
+      );
+    }
+  }, [activeOrg, listOrgs, router]);
+
   if (!activeOrg || !listOrgs || isPendingList || isPendingOrg) {
     return (
       <SidebarMenu>

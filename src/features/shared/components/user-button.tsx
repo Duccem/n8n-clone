@@ -27,12 +27,17 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth/auth-client";
 import ToggleTheme from "./toggle-theme";
+import LogOutButton from "./log-out";
+import { useHasActiveSubscription } from "@/features/subscription/hooks/use-subscription";
+import { Button } from "@/components/ui/button";
 
 export function SidebarUserButton() {
   const { data: session, isPending } = authClient.useSession();
+  const { data: activeOrg } = authClient.useActiveOrganization();
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
   const { isMobile } = useSidebar();
 
-  if (isPending || !session) {
+  if (isPending || !session || isLoading) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -104,13 +109,28 @@ export function SidebarUserButton() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            {!hasActiveSubscription ? (
+              <>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Button
+                      variant={"ghost"}
+                      className="w-full justify-start"
+                      onClick={() =>
+                        authClient.checkout({
+                          slug: "pro",
+                          referenceId: activeOrg?.id,
+                        })
+                      }
+                    >
+                      <Sparkles />
+                      Upgrade to Pro
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+              </>
+            ) : null}
             <DropdownMenuGroup className="flex items-center gap-2 px-2">
               Theme
               <ToggleTheme />
@@ -132,9 +152,8 @@ export function SidebarUserButton() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem asChild>
+              <LogOutButton />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
