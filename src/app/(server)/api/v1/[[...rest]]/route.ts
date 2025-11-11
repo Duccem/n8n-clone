@@ -1,8 +1,11 @@
+import { billingRouter } from "@/api/billing";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
 
 const handler = new OpenAPIHandler(
-  {},
+  {
+    billing: billingRouter,
+  },
   {
     interceptors: [
       onError((error) => {

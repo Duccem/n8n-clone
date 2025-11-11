@@ -64,7 +64,7 @@ export const auth = betterAuth({
           theme: "dark",
         }),
         portal({
-          returnUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/settings/billing`,
+          returnUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/organization/billing`,
         }),
         webhooks({
           secret: process.env.POLAR_WEBHOOK_SECRET || "",

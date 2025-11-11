@@ -59,24 +59,6 @@ const menu = [
       { title: "AI", url: "/integrations?q=ai" },
     ],
   },
-  {
-    title: "Organization",
-    icon: Building2,
-    items: [
-      {
-        title: "Settings",
-        url: "/organization",
-      },
-      {
-        title: "Members",
-        url: "/organization/members",
-      },
-      {
-        title: "Billing",
-        url: "/organization/billing",
-      },
-    ],
-  },
 ];
 
 export function NavMain() {

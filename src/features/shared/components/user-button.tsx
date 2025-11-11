@@ -28,8 +28,9 @@ import {
 import { authClient } from "@/lib/auth/auth-client";
 import ToggleTheme from "./toggle-theme";
 import LogOutButton from "./log-out";
-import { useHasActiveSubscription } from "@/features/subscription/hooks/use-subscription";
-import { Button } from "@/components/ui/button";
+import { useHasActiveSubscription } from "@/features/billing/hooks/use-subscription";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 export function SidebarUserButton() {
   const { data: session, isPending } = authClient.useSession();
@@ -141,10 +142,13 @@ export function SidebarUserButton() {
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
+              <Link href={"/billing"}>
+                <DropdownMenuItem>
+                  <CreditCard />
+                  Billing
+                </DropdownMenuItem>
+              </Link>
+
               <DropdownMenuItem>
                 <Bell />
                 Notifications
