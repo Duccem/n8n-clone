@@ -1,7 +1,7 @@
 "use client";
 import { authClient } from "@/lib/auth/auth-client";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import z from "zod";
 import { Label } from "../../../components/ui/label";
 import { Input } from "../../../components/ui/input";
@@ -26,6 +26,8 @@ const formSchema = z
 
 export const SignUpForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams?.get("redirectTo") ?? undefined;
 
   // Form setup and handling the submission
   const form = useForm({
@@ -48,11 +50,12 @@ export const SignUpForm = () => {
         },
         {
           onSuccess: () => {
-            router.push("/dashboard");
+            router.push(redirectTo ?? "/dashboard");
           },
           onError: (error) => {
             console.error("Sign-in error:", error);
-            toast.error(`Sign-up error: ${error.error.message}`);
+            const msg = (error as any)?.error?.message ?? "Sign-up failed";
+            toast.error(`Sign-up error: ${msg}`);
           },
         }
       );
@@ -63,7 +66,7 @@ export const SignUpForm = () => {
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: `${window.location.origin}/dashboard`,
+        callbackURL: redirectTo ?? `${window.location.origin}/dashboard`,
       });
     } catch (error) {
       console.error("OAuth sign-in error:", error);
