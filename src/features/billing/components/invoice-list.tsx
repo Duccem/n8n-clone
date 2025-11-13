@@ -3,12 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Table,
   TableBody,
   TableCell,
@@ -16,12 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { authClient } from "@/lib/auth/auth-client";
 import { cn } from "@/lib/utils";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 import { format } from "date-fns";
-import { Download, Loader2, MoreHorizontal } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -30,17 +23,18 @@ const InvoiceList = () => {
     queryKey: ["orders"],
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam = 1 }) => {
-      const { data } = await authClient.customer.orders.list({
-        query: {
-          page: Number(pageParam),
-          limit: 10,
-        },
-      });
-      const orders = data?.result.items!;
-      const pagination = data?.result.pagination!;
+      const response = await fetch(
+        `/api/v1/billing/orders?page=${pageParam}&limit=10`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch orders");
+      }
+      const data = await response.json();
+      const orders = data?.orders!;
+      const pagination = data?.pagination!;
 
       const ordersWithMetadata = {
-        data: orders?.map((order) => ({
+        data: orders?.map((order: any) => ({
           id: order.id,
           createdAt: order.createdAt,
           amount: {

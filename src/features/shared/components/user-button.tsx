@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { BadgeCheck, Bell, ChevronsUpDown } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -28,17 +21,13 @@ import {
 import { authClient } from "@/lib/auth/auth-client";
 import ToggleTheme from "./toggle-theme";
 import LogOutButton from "./log-out";
-import { useHasActiveSubscription } from "@/features/billing/hooks/use-subscription";
-import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export function SidebarUserButton() {
   const { data: session, isPending } = authClient.useSession();
-  const { data: activeOrg } = authClient.useActiveOrganization();
-  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
   const { isMobile } = useSidebar();
 
-  if (isPending || !session || isLoading) {
+  if (isPending || !session) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -110,28 +99,6 @@ export function SidebarUserButton() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {!hasActiveSubscription ? (
-              <>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <Button
-                      variant={"ghost"}
-                      className="w-full justify-start"
-                      onClick={() =>
-                        authClient.checkout({
-                          slug: "pro",
-                          referenceId: activeOrg?.id,
-                        })
-                      }
-                    >
-                      <Sparkles />
-                      Upgrade to Pro
-                    </Button>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-              </>
-            ) : null}
             <DropdownMenuGroup className="flex items-center gap-2 px-2">
               Theme
               <ToggleTheme />
@@ -144,13 +111,6 @@ export function SidebarUserButton() {
                   Account
                 </DropdownMenuItem>
               </Link>
-              <Link href={"/billing"}>
-                <DropdownMenuItem>
-                  <CreditCard />
-                  Billing
-                </DropdownMenuItem>
-              </Link>
-
               <DropdownMenuItem>
                 <Bell />
                 Notifications

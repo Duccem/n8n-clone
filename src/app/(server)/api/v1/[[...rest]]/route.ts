@@ -1,4 +1,4 @@
-import { billingRouter } from "@/api/billing";
+import { billingRouter } from "@/features/billing/api";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Building,
   Building2,
   ChevronRight,
   FolderOpen,
@@ -57,6 +58,15 @@ const menu = [
     items: [
       { title: "All", url: "/integrations?q=all" },
       { title: "AI", url: "/integrations?q=ai" },
+    ],
+  },
+  {
+    title: "Organization",
+    icon: Building,
+    items: [
+      { title: "Settings", url: "/organization" },
+      { title: "Billing", url: "/organization/billing" },
+      { title: "Members", url: "/organization/members" },
     ],
   },
 ];

@@ -13,7 +13,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { authClient } from "@/lib/auth/auth-client";
+import { products } from "@/lib/payments/products";
 import { Check, CreditCard } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export interface Plan {
@@ -53,13 +55,16 @@ export const plans: Plan[] = [
 const Prices = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>("free");
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const handleSubscribe = async () => {
     const organizationId = (await authClient.organization.list())?.data?.[0]
       ?.id;
-    await authClient.checkout({
-      slug: selectedPlan ?? "free",
-      referenceId: organizationId,
-    });
+    const productId = products.find(
+      (product) => product.slug === selectedPlan
+    )?.productId;
+    router.replace(
+      `/api/payments/checkout?products=${productId}&customerExternalId=${organizationId}`
+    );
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

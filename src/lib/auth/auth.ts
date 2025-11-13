@@ -52,28 +52,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    polar({
-      client: polarClient,
-      createCustomerOnSignUp: true,
-      enableCustomerPortal: true,
-      use: [
-        checkout({
-          products,
-          successUrl: process.env.POLAR_SUCCESS_URL,
-          authenticatedUsersOnly: true,
-          theme: "dark",
-        }),
-        portal({
-          returnUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/organization/billing`,
-        }),
-        webhooks({
-          secret: process.env.POLAR_WEBHOOK_SECRET || "",
-          onPayload: async ({ data, timestamp, type }) =>
-            console.log({ data, timestamp, type }),
-        }),
-        usage(),
-      ],
-    }),
     organization({
       ac,
       roles: {

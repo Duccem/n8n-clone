@@ -31,18 +31,16 @@ const ManageSubscription = () => {
     initialData: null,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data: state } = await authClient.customer.state();
-      if (!state?.activeSubscriptions?.length) {
+      const response = await fetch("/api/v1/billing/state");
+      if (!response.ok) {
         return null;
       }
-      return {
-        subscription: state?.activeSubscriptions[0],
-      };
+      return response.json();
     },
   });
 
   useEffect(() => {
-    if (data?.subscription) {
+    if (data) {
       const product = products.find(
         (p) => p.productId === data.subscription!.productId
       );
@@ -77,12 +75,7 @@ const ManageSubscription = () => {
         {!selectedPlan || selectedPlan?.name === "Basic Plan" ? (
           <Prices />
         ) : (
-          <Button
-            className="h-9"
-            onClick={async () => {
-              await authClient.customer.portal();
-            }}
-          >
+          <Button className="h-9" onClick={async () => {}}>
             Manage your subscription
           </Button>
         )}

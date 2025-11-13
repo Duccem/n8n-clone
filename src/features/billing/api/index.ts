@@ -1,5 +1,5 @@
 import z from "zod";
-import { authenticated } from ".";
+import { authenticated } from "@/lib/api";
 import { polarClient } from "@/lib/payments";
 
 const getInvoice = authenticated
@@ -72,8 +72,42 @@ const generateInvoice = authenticated
     }
   });
 
+const getCustomerState = authenticated
+  .route({ method: "GET", path: "/state" })
+  .handler(async ({ context }) => {
+    const state = await polarClient.customers.getStateExternal({
+      externalId: context.organization.id,
+    });
+    return { subscription: state.activeSubscriptions[0] || null };
+  });
+
+const getOrders = authenticated
+  .route({ method: "GET", path: "/orders" })
+  .input(
+    z.object({
+      page: z.coerce.number().optional(),
+      limit: z.coerce.number().optional(),
+    })
+  )
+  .handler(async ({ context, input }) => {
+    const customer = await polarClient.customers.getExternal({
+      externalId: context.organization.id,
+    });
+    const orders = await polarClient.orders.list({
+      customerId: customer.id,
+      page: input.page,
+      limit: input.limit,
+    });
+    return {
+      orders: orders.result.items,
+      pagination: orders.result.pagination,
+    };
+  });
+
 export const billingRouter = authenticated.prefix("/billing").router({
   getInvoice,
   generateInvoice,
+  getCustomerState,
+  getOrders,
 });
 

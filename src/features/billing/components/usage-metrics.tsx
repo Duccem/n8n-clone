@@ -1,10 +1,26 @@
 "use client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth/auth-client";
 import { useQuery } from "@tanstack/react-query";
 
 const PLAN_DATA = {
+  free: {
+    workflows: {
+      limit: 10,
+      disabled: false,
+      unlimited: false,
+    },
+    runs: {
+      limit: 50,
+      disabled: false,
+      unlimited: false,
+    },
+    users: {
+      limit: 1,
+      disabled: false,
+      unlimited: false,
+    },
+  },
   basic: {
     workflows: {
       limit: 10,
@@ -51,6 +67,10 @@ export const products = [
     productId: "f25bd403-cbd6-4d18-b6ed-3efdea685020",
     id: "basic",
     name: "Basic Plan",
+  },
+  {
+    productId: "e94fe245-269d-42f4-989d-000b625f63dd",
+    slug: "free",
   },
 ];
 
@@ -167,12 +187,18 @@ export function Usage() {
     queryKey: ["organization-usage-meters"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data: state, error } = await authClient.customer.state();
-      if (error) {
-        throw new Error(error.message);
+      const response = await fetch("/api/v1/billing/state");
+      if (!response.ok) {
+        return null;
       }
+      const data = await response.json();
+
+      if (data.subscription === null) {
+        return null;
+      }
+
       const plan = products.find(
-        (p) => p.productId === state.activeSubscriptions[0]?.productId
+        (p) => p.productId === data.subscription?.productId
       );
       return {
         plan: plan?.name || "basic",
@@ -186,11 +212,13 @@ export function Usage() {
     },
   });
 
-  if (isPending || !data) {
+  if (isPending) {
     return <UsageSkeleton />;
   }
 
-  const { meters, limits: planData } = data;
+  if (!data) {
+    return null;
+  }
 
   return (
     <div>
@@ -200,26 +228,26 @@ export function Usage() {
       <Card className="divide-y ">
         <UsageItem
           label="Organization workflows"
-          current={meters.workflows || 0}
-          max={planData.workflows.limit}
-          disabled={planData.workflows.disabled}
-          unlimited={planData.workflows.unlimited}
+          current={data.meters?.workflows ?? 0}
+          max={data.limits.workflows.limit}
+          disabled={data.limits.workflows.disabled}
+          unlimited={data.limits.workflows.unlimited}
           period="month"
         />
         <UsageItem
           label="Workflow runs"
-          current={meters.runs || 0}
-          max={planData.runs.limit}
-          disabled={planData.runs.disabled}
-          unlimited={planData.runs.unlimited}
+          current={data.meters?.runs ?? 0}
+          max={data.limits.runs.limit}
+          disabled={data.limits.runs.disabled}
+          unlimited={data.limits.runs.unlimited}
           period="month"
         />
         <UsageItem
           label="Organization members"
-          current={meters.users || 0}
-          max={planData.users.limit}
-          disabled={planData.users.disabled}
-          unlimited={planData.users.unlimited}
+          current={data.meters?.users ?? 0}
+          max={data.limits.users.limit}
+          disabled={data.limits.users.disabled}
+          unlimited={data.limits.users.unlimited}
         />
       </Card>
     </div>
@@ -236,7 +264,7 @@ export function UsageSkeleton() {
         Usage
       </h2>
 
-      <Card className="divide-y rounded-none">
+      <Card className="divide-y">
         {skeletonItems.map((item) => (
           <div
             key={item}

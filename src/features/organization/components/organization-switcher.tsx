@@ -90,7 +90,7 @@ export function OrganizationSwitcher() {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
+              Orgs
             </DropdownMenuLabel>
             {listOrgs.map((organization, index) => (
               <DropdownMenuItem

@@ -7,11 +7,6 @@ import {
 import { polarClient } from "@polar-sh/better-auth";
 
 export const authClient = createAuthClient({
-  plugins: [
-    organizationClient(),
-    polarClient(),
-    emailOTPClient(),
-    lastLoginMethodClient(),
-  ],
+  plugins: [organizationClient(), emailOTPClient(), lastLoginMethodClient()],
 });
 

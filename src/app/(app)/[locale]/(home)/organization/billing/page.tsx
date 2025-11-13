@@ -1,6 +1,7 @@
 import InvoiceList from "@/features/billing/components/invoice-list";
 import ManageSubscription from "@/features/billing/components/manage-subscription";
 import { Usage } from "@/features/billing/components/usage-metrics";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
@@ -11,9 +12,11 @@ export default function Page() {
           Manage your subscription and view your billing history.
         </p>
       </div>
-      <ManageSubscription />
-      <Usage />
-      <InvoiceList />
+      <Suspense>
+        <ManageSubscription />
+        <Usage />
+        <InvoiceList />
+      </Suspense>
     </div>
   );
 }
