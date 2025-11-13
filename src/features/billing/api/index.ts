@@ -1,6 +1,7 @@
 import z from "zod";
 import { authenticated } from "@/lib/api";
 import { polarClient } from "@/lib/payments";
+import slugify from "slugify";
 
 const getInvoice = authenticated
   .route({
@@ -104,10 +105,23 @@ const getOrders = authenticated
     };
   });
 
+const createBillingCustomer = authenticated
+  .route({
+    method: "POST",
+    path: "/customer",
+  })
+  .handler(async ({ context }) => {
+    await polarClient.customers.create({
+      externalId: context.organization.id,
+      email: `${slugify(context.organization.name)}@nodebase.com`,
+    });
+  });
+
 export const billingRouter = authenticated.prefix("/billing").router({
   getInvoice,
   generateInvoice,
   getCustomerState,
   getOrders,
+  createBillingCustomer,
 });
 

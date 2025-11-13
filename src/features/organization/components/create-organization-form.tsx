@@ -46,7 +46,7 @@ const CreateOrganizationForm = () => {
           slug: slugify(value.name),
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             console.log("Organization created successfully");
           },
           onError: (ctx) => {
@@ -54,10 +54,19 @@ const CreateOrganizationForm = () => {
           },
         }
       );
-      await authClient.organization.setActive({
-        organizationId: data?.id,
-      });
-      router.refresh();
+      await authClient.organization.setActive(
+        {
+          organizationId: data?.id,
+        },
+        {
+          onSuccess: async () => {
+            await fetch("api/billing/customer", { method: "POST" });
+            toast.success("Organization created successfully");
+
+            router.refresh();
+          },
+        }
+      );
     },
   });
   return (
