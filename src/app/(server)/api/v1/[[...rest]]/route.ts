@@ -1,10 +1,12 @@
 import { billingRouter } from "@/features/billing/api";
+import { workflowsRouter } from "@/features/workflows/api";
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { onError } from "@orpc/server";
 
 const handler = new OpenAPIHandler(
   {
     billing: billingRouter,
+    workflow: workflowsRouter,
   },
   {
     interceptors: [
