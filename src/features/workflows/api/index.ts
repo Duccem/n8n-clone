@@ -1,7 +1,8 @@
 import { authenticated } from "@/lib/api";
 import { database } from "@/lib/database";
 import { workflow } from "@/lib/database/schema/workflow";
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, like, SQL, sql } from "drizzle-orm";
+import { AnyPgColumn } from "drizzle-orm/pg-core";
 import z from "zod";
 
 const createWorkflow = authenticated
@@ -65,21 +66,44 @@ export const listWorkflows = authenticated
     z.object({
       page: z.coerce.number().min(1).default(1),
       pageSize: z.coerce.number().min(1).max(100).default(10),
+      query: z.string().optional(),
+      state: z.string().optional(),
     })
   )
   .handler(async ({ context, input }) => {
     const { page, pageSize } = input;
+    const queryFilters: Array<any> = [];
+
+    if (input.query) {
+      queryFilters.push(
+        like(lower(workflow.name), `%${input.query.toLowerCase()}%`)
+      );
+    }
+
+    if (input.state) {
+      queryFilters.push(eq(workflow.state, input.state));
+    }
     const workflowsSelect = database
       .select()
       .from(workflow)
-      .where(eq(workflow.organizationId, context.organization.id))
+      .where(
+        and(
+          eq(workflow.organizationId, context.organization.id),
+          ...queryFilters
+        )
+      )
       .limit(pageSize)
       .offset((page - 1) * pageSize)
       .orderBy(desc(workflow.createdAt));
     const workflowsCount = database
       .select({ count: count(workflow.id) })
       .from(workflow)
-      .where(eq(workflow.organizationId, context.organization.id));
+      .where(
+        and(
+          eq(workflow.organizationId, context.organization.id),
+          ...queryFilters
+        )
+      );
 
     const [workflows, totalCountResult] = await Promise.all([
       workflowsSelect,
@@ -101,6 +125,10 @@ export const listWorkflows = authenticated
       },
     };
   });
+
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(${email})`;
+}
 
 const getWorkflow = authenticated
   .route({ method: "GET", path: "/:workflowId" })

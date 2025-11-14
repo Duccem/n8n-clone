@@ -3,12 +3,26 @@ import { Pagination } from "@/features/shared/types/pagination";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useListWorkflows = (page: number = 1, pageSize: number = 10) => {
+export const useListWorkflows = (
+  page: number = 1,
+  pageSize: number = 10,
+  query?: string,
+  state?: string
+) => {
   return useQuery({
-    queryKey: ["workflows", page, pageSize],
+    queryKey: ["workflows", page, pageSize, query, state],
     queryFn: async () => {
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("pageSize", pageSize.toString());
+      if (query) {
+        queryParams.append("query", query);
+      }
+      if (state) {
+        queryParams.append("state", state);
+      }
       const response = await fetch(
-        `/api/v1/workflow?page=${page}&pageSize=${pageSize}`,
+        `/api/v1/workflow?${queryParams.toString()}`,
         {
           method: "GET",
           headers: {

@@ -9,6 +9,7 @@ export const workflow = pgTable("workflow", {
     .notNull()
     .references(() => organization.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  state: text("state").notNull().default("active"),
   updatedAt: timestamp("updated_at")
     .notNull()
     .defaultNow()
