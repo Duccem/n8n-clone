@@ -5,10 +5,7 @@ import { and, count, desc, eq, like, SQL, sql } from "drizzle-orm";
 import { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import z from "zod";
-import { customAlphabet } from "nanoid";
 import { NodeType } from "@/features/editor/types/node";
-
-const nano = customAlphabet("abcdefghijklmnopqrstuvwxyz01234567890", 4);
 
 const createWorkflow = authenticated
   .route({ method: "POST", path: "/" })
