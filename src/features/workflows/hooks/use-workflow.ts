@@ -1,4 +1,4 @@
-import { Workflow } from "@/features/billing/types/workflow";
+import { Workflow } from "@/features/workflows/types/workflow";
 import { Pagination } from "@/features/shared/types/pagination";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";

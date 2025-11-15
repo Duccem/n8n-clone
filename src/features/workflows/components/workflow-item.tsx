@@ -9,10 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Workflow } from "@/features/billing/types/workflow";
+import { Workflow } from "@/features/workflows/types/workflow";
 import { format, formatDistanceToNow } from "date-fns";
 import { Ellipsis, WorkflowIcon } from "lucide-react";
 import { useDeleteWorkflow } from "../hooks/use-workflow";
+import Link from "next/link";
 
 const WorkflowItem = ({ workflow }: { workflow: Workflow }) => {
   const { mutate, isPending } = useDeleteWorkflow(workflow.id);
@@ -23,9 +24,12 @@ const WorkflowItem = ({ workflow }: { workflow: Workflow }) => {
           <WorkflowIcon className="size-6" />
         </div>
         <div>
-          <h3 className="text-lg font-medium group-hover:underline">
+          <Link
+            className="text-lg font-medium group-hover:underline"
+            href={`/workflows/${workflow.id}`}
+          >
             {workflow.name}
-          </h3>
+          </Link>
           <div className="text-sm text-muted-foreground">
             Created{" "}
             {formatDistanceToNow(new Date(workflow.createdAt), {

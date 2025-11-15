@@ -1,9 +1,14 @@
 import { authenticated } from "@/lib/api";
 import { database } from "@/lib/database";
-import { workflow } from "@/lib/database/schema/workflow";
+import { connection, node, workflow } from "@/lib/database/schema/workflow";
 import { and, count, desc, eq, like, SQL, sql } from "drizzle-orm";
 import { AnyPgColumn } from "drizzle-orm/pg-core";
+
 import z from "zod";
+import { customAlphabet } from "nanoid";
+import { NodeType } from "@/features/editor/types/node";
+
+const nano = customAlphabet("abcdefghijklmnopqrstuvwxyz01234567890", 4);
 
 const createWorkflow = authenticated
   .route({ method: "POST", path: "/" })
@@ -13,9 +18,22 @@ const createWorkflow = authenticated
     })
   )
   .handler(async ({ input, context }) => {
-    await database.insert(workflow).values({
-      name: input.name,
-      organizationId: context.organization.id,
+    const newWorkflow = await database
+      .insert(workflow)
+      .values({
+        name: input.name,
+        organizationId: context.organization.id,
+      })
+      .returning();
+
+    await database.insert(node).values({
+      type: NodeType.INITIAL,
+      position: { x: 0, y: 0 },
+      name: NodeType.INITIAL,
+      workflowId: newWorkflow[0].id,
+      data: {
+        label: "Start",
+      },
     });
   });
 
@@ -23,7 +41,7 @@ const updateWorkflow = authenticated
   .route({ method: "PUT", path: "/:workflowId" })
   .input(
     z.object({
-      workflowId: z.string().uuid(),
+      workflowId: z.string(),
       name: z.string().min(1, "Workflow name is required"),
     })
   )
@@ -50,6 +68,10 @@ export const removeWorkflow = authenticated
     })
   )
   .handler(async ({ input, context }) => {
+    await database.delete(node).where(eq(node.workflowId, input.workflowId));
+    await database
+      .delete(connection)
+      .where(eq(connection.workflowId, input.workflowId));
     await database
       .delete(workflow)
       .where(
@@ -134,22 +156,20 @@ const getWorkflow = authenticated
   .route({ method: "GET", path: "/:workflowId" })
   .input(
     z.object({
-      workflowId: z.string().uuid(),
+      workflowId: z.uuid(),
     })
   )
   .handler(async ({ input, context }) => {
-    const workflowItem = await database
-      .select()
-      .from(workflow)
-      .where(
-        and(
-          eq(workflow.id, input.workflowId),
-          eq(workflow.organizationId, context.organization.id)
-        )
-      )
-      .limit(1)
-      .then((res) => res[0] || null);
-
+    const workflowItem = await database.query.workflow.findFirst({
+      where: and(
+        eq(workflow.id, input.workflowId),
+        eq(workflow.organizationId, context.organization.id)
+      ),
+      with: {
+        nodes: true,
+        connections: true,
+      },
+    });
     return { workflow: workflowItem };
   });
 
