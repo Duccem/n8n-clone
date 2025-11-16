@@ -4,9 +4,13 @@ import { Node, useReactFlow } from "@xyflow/react";
 import {
   GlobeIcon,
   MousePointerIcon,
-  PlusIcon,
+  PencilIcon,
   WebhookIcon,
   X,
+  AlarmClockIcon,
+  SparklesIcon,
+  CodeIcon,
+  FileText,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -37,6 +41,24 @@ const triggerNodes: NodeTypeOption[] = [
     description: "Start the workflow manually.",
     icon: MousePointerIcon,
   },
+  {
+    type: NodeType.WEBHOOK,
+    label: "Webhook",
+    description: "Trigger the workflow via an HTTP webhook.",
+    icon: WebhookIcon,
+  },
+  {
+    type: NodeType.SCHEDULE_TRIGGER,
+    label: "Schedule Trigger",
+    description: "Trigger the workflow on a defined schedule.",
+    icon: AlarmClockIcon,
+  },
+  {
+    type: NodeType.FORM_TRIGGER,
+    label: "Form Trigger",
+    description: "Trigger the workflow when a form is submitted.",
+    icon: FileText,
+  },
 ];
 
 const executionNodes: NodeTypeOption[] = [
@@ -45,6 +67,24 @@ const executionNodes: NodeTypeOption[] = [
     label: "HTTP Request",
     description: "Make HTTP requests to external services.",
     icon: GlobeIcon,
+  },
+  {
+    type: NodeType.AI_PROCESSING,
+    label: "AI Processing",
+    description: "Process data using AI models.",
+    icon: SparklesIcon,
+  },
+  {
+    type: NodeType.FUNCTION,
+    label: "Function",
+    description: "Run custom JavaScript code.",
+    icon: CodeIcon,
+  },
+  {
+    type: NodeType.SET,
+    label: "Set",
+    description: "Set or modify data within the workflow.",
+    icon: PencilIcon,
   },
 ];
 
