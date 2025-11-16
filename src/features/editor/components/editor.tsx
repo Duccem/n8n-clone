@@ -19,8 +19,10 @@ import "@xyflow/react/dist/style.css";
 import { useCallback, useState } from "react";
 import { NodeComponents } from "./node-factory";
 import { AddNodeButton } from "./add-node-button";
+import { NodeSelector } from "./node-selector";
 
 const Editor = ({ workflow }: { workflow: Workflow }) => {
+  const [open, setOpen] = useState(false);
   const [nodes, setNodes] = useState<Node[]>(workflow.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(
     workflow.connections.map((c) => ({

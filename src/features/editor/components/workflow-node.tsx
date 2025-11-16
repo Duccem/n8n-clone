@@ -14,7 +14,7 @@ type WorkflowNodeProps = {
   description?: string;
 };
 
-export const WorkflowNode = ({
+export const WorkflowNodeToolbar = ({
   children,
   showToolbar = false,
   onDelete,
@@ -29,7 +29,7 @@ export const WorkflowNode = ({
           <Button variant="ghost" size="sm" onClick={onSettings}>
             <SettingsIcon className="size-4" />
           </Button>
-          <Button variant="ghost" size="sm" onClick={onDelete}>
+          <Button variant="ghost" size="sm" className="z-10" onClick={onDelete}>
             <Trash2Icon className="size-4" />
           </Button>
         </NodeToolbar>

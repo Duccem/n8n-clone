@@ -24,7 +24,11 @@ export const workflow = pgTable("workflow", {
     .$defaultFn(() => new Date()),
 });
 
-export const node_type = pgEnum("node_type", ["initial"]);
+export const node_type = pgEnum("node_type", [
+  "initial",
+  "manual_trigger",
+  "http_request",
+]);
 
 export const node = pgTable("node", {
   id: uuid("id").primaryKey().$defaultFn(v7),
