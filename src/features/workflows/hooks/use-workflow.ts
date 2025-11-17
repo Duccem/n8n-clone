@@ -153,3 +153,30 @@ export const useDeleteWorkflow = (workflowId: string) => {
   });
 };
 
+export const useUpdateNodesInWorkflow = (workflowId: string) => {
+  return useMutation({
+    mutationKey: ["update-nodes-workflow", workflowId],
+    mutationFn: async (data: { nodes: Array<any>; edges: Array<any> }) => {
+      const response = await fetch(`/api/v1/workflow/${workflowId}/nodes`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update nodes in workflow");
+      }
+    },
+    onError: (error) => {
+      console.error("Error updating nodes in workflow:", error);
+      toast.error("Failed to update nodes in workflow. Please try again.");
+    },
+    onSuccess: (_, __, ___, ctx) => {
+      ctx.client.invalidateQueries({ queryKey: ["workflow", workflowId] });
+      toast.success("Workflow nodes updated successfully");
+    },
+  });
+};
+

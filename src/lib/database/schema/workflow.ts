@@ -28,6 +28,12 @@ export const node_type = pgEnum("node_type", [
   "initial",
   "manual_trigger",
   "http_request",
+  "webhook",
+  "form_trigger",
+  "schedule_trigger",
+  "ai_processing",
+  "function",
+  "set",
 ]);
 
 export const node = pgTable("node", {

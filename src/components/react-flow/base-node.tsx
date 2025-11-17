@@ -1,25 +1,35 @@
 import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
+import { NodeStatus } from "./node-status-indicator";
+import { CheckCircle2Icon, Loader2Icon, XCircleIcon } from "lucide-react";
 
-export function BaseNode({ className, ...props }: ComponentProps<"div">) {
+interface BaseNodeProps extends ComponentProps<"div"> {
+  status?: NodeStatus;
+}
+
+export function BaseNode({ className, status, ...props }: BaseNodeProps) {
   return (
     <div
       className={cn(
-        "bg-card text-card-foreground relative rounded-md border",
+        "bg-card text-card-foreground relative rounded-md border hover:bg-accent",
         "hover:ring-1",
-        // React Flow displays node elements inside of a `NodeWrapper` component,
-        // which compiles down to a div with the class `react-flow__node`.
-        // When a node is selected, the class `selected` is added to the
-        // `react-flow__node` element. This allows us to style the node when it
-        // is selected, using Tailwind's `&` selector.
-        "[.react-flow\\_\\_node.selected_&]:border-muted-foreground",
-        "[.react-flow\\_\\_node.selected_&]:shadow-lg",
-        className,
+        className
       )}
       tabIndex={0}
       {...props}
-    />
+    >
+      {props.children}
+      {status === "error" && (
+        <XCircleIcon className="absolute right-1 bottom-1 size-2 text-red-700 stroke-3" />
+      )}
+      {status === "success" && (
+        <CheckCircle2Icon className="absolute right-1 bottom-1 size-2 text-emerald-700 stroke-3" />
+      )}
+      {status === "loading" && (
+        <Loader2Icon className="absolute right-0.5 bottom-0.5 size-2 text-blue-700 stroke-3 animate-spin" />
+      )}
+    </div>
   );
 }
 
@@ -38,7 +48,7 @@ export function BaseNodeHeader({
         "mx-0 my-0 -mb-1 flex flex-row items-center justify-between gap-2 px-3 py-2",
         // Remove or modify these classes if you modify the padding in the
         // `<BaseNode />` component.
-        className,
+        className
       )}
     />
   );
@@ -80,9 +90,10 @@ export function BaseNodeFooter({ className, ...props }: ComponentProps<"div">) {
       data-slot="base-node-footer"
       className={cn(
         "flex flex-col items-center gap-y-2 border-t px-3 pt-2 pb-3",
-        className,
+        className
       )}
       {...props}
     />
   );
 }
+

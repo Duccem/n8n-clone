@@ -20,9 +20,10 @@ import { useCallback, useState } from "react";
 import { NodeComponents } from "./node-factory";
 import { AddNodeButton } from "./add-node-button";
 import { NodeSelector } from "./node-selector";
+import { useSetAtom } from "jotai";
+import { editorAtom } from "../store";
 
 const Editor = ({ workflow }: { workflow: Workflow }) => {
-  const [open, setOpen] = useState(false);
   const [nodes, setNodes] = useState<Node[]>(workflow.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(
     workflow.connections.map((c) => ({
@@ -33,6 +34,8 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
       targetHandle: c.targetInput,
     })) ?? []
   );
+
+  const setEditor = useSetAtom(editorAtom);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -59,9 +62,12 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
         onConnect={onConnect}
         fitView
         nodeTypes={NodeComponents}
+        onInit={setEditor}
         proOptions={{
           hideAttribution: true,
         }}
+        snapGrid={[10, 10]}
+        snapToGrid
       >
         <Background />
         <Controls />

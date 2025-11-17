@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "../ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "jotai";
 
 const queryClient = new QueryClient({});
 
@@ -20,7 +21,7 @@ export const Providers = ({
       <NuqsAdapter>
         <I18nProviderClient locale={locale}>
           <QueryClientProvider client={queryClient}>
-            {children}
+            <Provider>{children}</Provider>
           </QueryClientProvider>
           <Toaster />
         </I18nProviderClient>

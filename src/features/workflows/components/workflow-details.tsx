@@ -3,6 +3,7 @@
 import Editor from "@/features/editor/components/editor";
 import { useWorkflow } from "../hooks/use-workflow";
 import WorkflowName from "./workflow-name";
+import { SaveWorkflowButton } from "./save-button";
 
 const WorkflowDetails = ({ id }: { id: string }) => {
   const { data, isLoading } = useWorkflow(id);
@@ -16,7 +17,10 @@ const WorkflowDetails = ({ id }: { id: string }) => {
   }
   return (
     <div className="flex flex-col h-full">
-      <WorkflowName workflow={data} />
+      <div className="flex items-center justify-between mb-4">
+        <WorkflowName workflow={data} />
+        <SaveWorkflowButton workflowId={data.id} />
+      </div>
       <Editor workflow={data} />
     </div>
   );

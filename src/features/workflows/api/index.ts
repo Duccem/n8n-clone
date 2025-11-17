@@ -57,6 +57,89 @@ const updateWorkflow = authenticated
       );
   });
 
+const updateNodesWorkflow = authenticated
+  .route({ method: "PUT", path: "/:workflowId/nodes" })
+  .input(
+    z.object({
+      workflowId: z.string(),
+      nodes: z.array(
+        z.object({
+          id: z.uuid(),
+          type: z
+            .enum([
+              "initial",
+              "manual_trigger",
+              "http_request",
+              "webhook",
+              "form_trigger",
+              "schedule_trigger",
+              "ai_processing",
+              "function",
+              "set",
+            ])
+            .nullish(),
+          data: z.record(z.string(), z.any()),
+          position: z.object({
+            x: z.number(),
+            y: z.number(),
+          }),
+        })
+      ),
+      edges: z.array(
+        z.object({
+          source: z.string(),
+          target: z.string(),
+          sourceHandle: z.string().nullish(),
+          targetHandle: z.string().nullish(),
+        })
+      ),
+    })
+  )
+  .handler(async ({ input, context }) => {
+    const { edges, nodes, workflowId } = input;
+
+    const existingWorkflow = await database.query.workflow.findFirst({
+      where: and(
+        eq(workflow.id, workflowId),
+        eq(workflow.organizationId, context.organization.id)
+      ),
+    });
+
+    if (!existingWorkflow) {
+      throw new Error("Workflow not found");
+    }
+    await database
+      .delete(connection)
+      .where(eq(connection.workflowId, workflowId));
+    await database.delete(node).where(eq(node.workflowId, workflowId));
+
+    await database.insert(node).values(
+      nodes.map((nodeItem) => ({
+        id: nodeItem.id,
+        workflowId,
+        type: nodeItem.type ?? "initial",
+        data: nodeItem.data,
+        position: nodeItem.position,
+        name: nodeItem.data.label ?? "Unnamed Node",
+      }))
+    );
+
+    await database.insert(connection).values(
+      edges.map((edgeItem) => ({
+        workflowId,
+        sourceNodeId: edgeItem.source,
+        targetNodeId: edgeItem.target,
+        sourceOutput: edgeItem.sourceHandle ?? "main",
+        targetInput: edgeItem.targetHandle ?? "main",
+      }))
+    );
+
+    await database
+      .update(workflow)
+      .set({ updatedAt: new Date() })
+      .where(eq(workflow.id, workflowId));
+  });
+
 export const removeWorkflow = authenticated
   .route({ method: "DELETE", path: "/:workflowId" })
   .input(
@@ -176,5 +259,6 @@ export const workflowsRouter = authenticated.prefix("/workflow").router({
   removeWorkflow,
   listWorkflows,
   getWorkflow,
+  updateNodesWorkflow,
 });
 
