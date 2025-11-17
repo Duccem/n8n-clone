@@ -16,12 +16,14 @@ import {
   Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { NodeComponents } from "./node-factory";
 import { AddNodeButton } from "./add-node-button";
 import { NodeSelector } from "./node-selector";
 import { useSetAtom } from "jotai";
 import { editorAtom } from "../store";
+import { NodeType } from "../types/node";
+import { ExecuteWorkflow } from "@/features/workflows/components/execute-workflow";
 
 const Editor = ({ workflow }: { workflow: Workflow }) => {
   const [nodes, setNodes] = useState<Node[]>(workflow.nodes ?? []);
@@ -52,6 +54,11 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
       setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     []
   );
+
+  const hasManualTrigger = useMemo(
+    () => nodes.some((node) => node.type === NodeType.MANUAL_TRIGGER),
+    [nodes]
+  );
   return (
     <div className="w-full h-full bg-accent rounded-2xl p-3">
       <ReactFlow
@@ -75,6 +82,11 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
         <Panel position="top-right">
           <AddNodeButton />
         </Panel>
+        {hasManualTrigger && (
+          <Panel position="bottom-center">
+            <ExecuteWorkflow workflowId={workflow.id} />
+          </Panel>
+        )}
       </ReactFlow>
     </div>
   );

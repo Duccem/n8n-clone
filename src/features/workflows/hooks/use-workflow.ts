@@ -180,3 +180,28 @@ export const useUpdateNodesInWorkflow = (workflowId: string) => {
   });
 };
 
+export const useExecuteWorkflow = (workflowId: string) => {
+  return useMutation({
+    mutationKey: ["execute-workflow", workflowId],
+    mutationFn: async () => {
+      const response = await fetch(`/api/v1/workflow/${workflowId}/execute`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to execute workflow");
+      }
+    },
+    onError: (error) => {
+      console.error("Error executing workflow:", error);
+      toast.error("Failed to execute workflow. Please try again.");
+    },
+    onSuccess: () => {
+      toast.success("Workflow execution started successfully");
+    },
+  });
+};
+

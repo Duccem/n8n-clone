@@ -6,6 +6,7 @@ import { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import z from "zod";
 import { NodeType } from "@/features/editor/types/node";
+import { inngest } from "@/lib/inngest";
 
 const createWorkflow = authenticated
   .route({ method: "POST", path: "/" })
@@ -251,6 +252,34 @@ const getWorkflow = authenticated
       },
     });
     return { workflow: workflowItem };
+  });
+
+const executeWorkflow = authenticated
+  .route({ method: "POST", path: "/:workflowId/execute" })
+  .input(
+    z.object({
+      workflowId: z.uuid(),
+    })
+  )
+  .handler(async ({ input, context }) => {
+    const existingWorkflow = await database.query.workflow.findFirst({
+      where: and(
+        eq(workflow.id, input.workflowId),
+        eq(workflow.organizationId, context.organization.id)
+      ),
+    });
+
+    if (!existingWorkflow) {
+      throw new Error("Workflow not found");
+    }
+
+    await inngest.send({
+      name: "workflows/execute.workflow",
+      data: {
+        workflowId: existingWorkflow.id,
+        organizationId: existingWorkflow.organizationId,
+      },
+    });
   });
 
 export const workflowsRouter = authenticated.prefix("/workflow").router({

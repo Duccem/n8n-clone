@@ -1,10 +1,10 @@
 import { serve } from "inngest/next";
 import { inngest } from "@/lib/inngest";
-import { helloWorld } from "@/lib/inngest/tasks/hello-world";
+import { executeWorkflow } from "@/features/workflows/functions/run-workflow";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [helloWorld],
+  functions: [executeWorkflow],
 });
 
