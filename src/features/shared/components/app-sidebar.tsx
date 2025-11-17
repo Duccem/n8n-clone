@@ -9,7 +9,7 @@ import { SidebarUserButton } from "./user-button";
 import { OrganizationSwitcher } from "@/features/organization/components/organization-switcher";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" variant="inset" {...props}>
+    <Sidebar collapsible="offcanvas" variant="inset" {...props}>
       <SidebarHeader>
         <OrganizationSwitcher />
       </SidebarHeader>

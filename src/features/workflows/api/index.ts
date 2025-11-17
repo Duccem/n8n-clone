@@ -289,5 +289,6 @@ export const workflowsRouter = authenticated.prefix("/workflow").router({
   listWorkflows,
   getWorkflow,
   updateNodesWorkflow,
+  executeWorkflow,
 });
 

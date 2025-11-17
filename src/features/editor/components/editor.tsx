@@ -19,11 +19,11 @@ import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useState } from "react";
 import { NodeComponents } from "./node-factory";
 import { AddNodeButton } from "./add-node-button";
-import { NodeSelector } from "./node-selector";
 import { useSetAtom } from "jotai";
 import { editorAtom } from "../store";
 import { NodeType } from "../types/node";
 import { ExecuteWorkflow } from "@/features/workflows/components/execute-workflow";
+import { useTheme } from "next-themes";
 
 const Editor = ({ workflow }: { workflow: Workflow }) => {
   const [nodes, setNodes] = useState<Node[]>(workflow.nodes ?? []);
@@ -36,6 +36,8 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
       targetHandle: c.targetInput,
     })) ?? []
   );
+
+  const { resolvedTheme } = useTheme();
 
   const setEditor = useSetAtom(editorAtom);
 
@@ -60,7 +62,7 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
     [nodes]
   );
   return (
-    <div className="w-full h-full bg-accent rounded-2xl p-3">
+    <div className="w-full h-full bg-accent rounded-2xl overflow-hidden border border-border">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -75,6 +77,7 @@ const Editor = ({ workflow }: { workflow: Workflow }) => {
         }}
         snapGrid={[10, 10]}
         snapToGrid
+        colorMode={resolvedTheme === "dark" ? "dark" : "light"}
       >
         <Background />
         <Controls />

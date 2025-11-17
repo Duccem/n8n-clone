@@ -17,29 +17,41 @@ export const WorkflowsTable = () => {
     state: parseAsString.withDefault(""),
   });
   const { page, pageSize, query, state } = urlState;
-  const { data, error, isPending } = useListWorkflows(
-    page,
-    pageSize,
-    query,
-    state
-  );
+  const { data, error, isPending, isFetching, isPlaceholderData } =
+    useListWorkflows(page, pageSize, query, state);
 
-  if (isPending) {
-    return <WorkflowsLoading />;
+  if (isPending || isFetching || isPlaceholderData) {
+    return (
+      <div className="flex flex-col gap-4 mt-6">
+        <div className="flex justify-between items-center">
+          <SearchWorkflows />
+          <FilterStateWorkflows />
+        </div>
+        <WorkflowsLoading />
+      </div>
+    );
   }
 
   if (error) {
-    return <WorkflowsError />;
+    return (
+      <div className="flex flex-col gap-4 mt-6">
+        <div className="flex justify-between items-center">
+          <SearchWorkflows />
+          <FilterStateWorkflows />
+        </div>
+        <WorkflowsError />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-4 mt-6">
+      <div className="flex justify-between items-center">
+        <SearchWorkflows />
+        <FilterStateWorkflows />
+      </div>
       {data.items.length > 0 ? (
         <>
-          <div className="flex justify-between items-center">
-            <SearchWorkflows />
-            <FilterStateWorkflows />
-          </div>
           {data.items.map((workflow) => (
             <WorkflowItem workflow={workflow} key={workflow.id} />
           ))}
